@@ -24,9 +24,14 @@ docker run -e APP_ID=<app-id> -e PRIVATE_KEY=<pem-value> ruler-bot
 
 ## Contributing
 
-If you have suggestions for how ruler-bot could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+If you have suggestions for how ruler-bot could be improved, or want to report a bug, open an issue! We'd love all and
+any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
+
+## Thanks
+
+<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 ## License
 
