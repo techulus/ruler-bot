@@ -3,25 +3,45 @@ const defaultConfig = {
   maxChange: 1000,
   close: true,
   message: "Closing the PR as the changes have exceeded 1000 lines",
+  safeWords: ["ruler-ignore", "wip", "draft"],
 };
 
 module.exports = (app) => {
   app.on(
-    ["pull_request.opened", "pull_request.edited", "pull_request.synchronize"],
+    [
+      "pull_request.opened",
+      "pull_request.reopened",
+      "pull_request.edited",
+      "pull_request.synchronize",
+    ],
     async (context) => {
       const config = await context.config("ruler.yml", defaultConfig);
       context.log.info({
         config,
       });
 
-      const { additions, deletions, head } = context.payload.pull_request;
+      const { title, additions, deletions, head } =
+        context.payload.pull_request;
       context.log.info({
         event: context.name,
+        title,
         additions,
         deletions,
       });
 
-      if (additions + deletions < config.maxChange) {
+      context.log.info(`Checking safe words in ${title}`);
+      for (let i = 0; i < config.safeWords.length; i++) {
+        if (title.indexOf(config.safeWords[i]) > -1) {
+          context.log.info(
+            `Ignoring PR as title contains safe word: ${config.safeWords[i]}`
+          );
+          return;
+        }
+      }
+
+      context.log.info("Checking changes");
+      if (Math.abs(additions - deletions) < config.maxChange) {
+        context.log.info("All good, changes are under the limit");
         try {
           return context.octokit.checks.create(
             context.repo({
@@ -38,6 +58,7 @@ module.exports = (app) => {
         }
       }
 
+      context.log.info("Oh oh, that doesn't look good");
       try {
         await context.octokit.issues.createComment(
           context.issue({ body: config.message })
