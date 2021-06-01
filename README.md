@@ -5,14 +5,15 @@
 ## Configure
 
 Default config:
+
 ```yaml
 # Condition for triggering the check, Maximum allowed change -> (additions - deletions)
-maxChange: 10
+maxChange: 1000
 # Message if the PR exceeds the threshold
-message: "Sorry, the PR is too big :("
+message: "FYI: The PR changes have exceeded configured threshold"
 # Close the PR if the change is more than threshold?
 close: true
-# Ignore checks if these words are present in title
+# Bot will ignore the PR if these words are present in title
 safeWords:
   - ruler-ignore
   - wip

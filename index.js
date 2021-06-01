@@ -2,7 +2,7 @@ const defaultConfig = {
   name: "Ruler",
   maxChange: 1000,
   close: true,
-  message: "Closing the PR as the changes have exceeded 1000 lines",
+  message: "FYI: The PR changes have exceeded configured threshold",
   safeWords: ["ruler-ignore", "wip", "draft"],
 };
 
@@ -76,7 +76,7 @@ module.exports = (app) => {
               status: "completed",
               conclusion: "failure",
               completed_at: new Date().toISOString(),
-              title: "Check has failed",
+              title: config.message,
             })
           );
         }
