@@ -1,21 +1,72 @@
-/**
- * This is the main entrypoint to your Probot app
- * @param {import('probot').Probot} app
- */
+const defaultConfig = {
+  name: "Ruler",
+  maxChange: 1000,
+  close: true,
+  message: "Closing the PR as the changes have exceeded 1000 lines",
+};
+
 module.exports = (app) => {
-  // Your code here
-  app.log.info("Yay, the app was loaded!");
+  app.on(
+    ["pull_request.opened", "pull_request.edited", "pull_request.synchronize"],
+    async (context) => {
+      const config = await context.config("ruler.yml", defaultConfig);
+      context.log.info({
+        config,
+      });
 
-  app.on("issues.opened", async (context) => {
-    const issueComment = context.issue({
-      body: "Thanks for opening this issue!",
-    });
-    return context.octokit.issues.createComment(issueComment);
-  });
+      const { additions, deletions, head } = context.payload.pull_request;
+      context.log.info({
+        event: context.name,
+        additions,
+        deletions,
+      });
 
-  // For more information on building apps:
-  // https://probot.github.io/docs/
+      if (additions + deletions < config.maxChange) {
+        try {
+          return context.octokit.checks.create(
+            context.repo({
+              name: config.name,
+              head_sha: head.sha,
+              status: "completed",
+              conclusion: "success",
+              completed_at: new Date().toISOString(),
+              title: "Ready for review",
+            })
+          );
+        } catch (e) {
+          context.log.error({ error });
+        }
+      }
 
-  // To get your app running against GitHub, see:
-  // https://probot.github.io/docs/development/
+      try {
+        await context.octokit.issues.createComment(
+          context.issue({ body: config.message })
+        );
+
+        if (config.close) {
+          await context.octokit.issues.update(
+            context.issue({ state: "closed" })
+          );
+        } else {
+          return context.octokit.checks.create(
+            context.repo({
+              name: config.name,
+              head_sha: head.sha,
+              status: "completed",
+              conclusion: "failure",
+              completed_at: new Date().toISOString(),
+              title: "Check has failed",
+            })
+          );
+        }
+      } catch (error) {
+        context.log.error({ error });
+      }
+    }
+  );
+
+  // For testing
+  // app.onAny(async (context) => {
+  //   context.log.info({ event: context.name });
+  // });
 };
