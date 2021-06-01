@@ -2,6 +2,23 @@
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that Take actions based on size of pull request
 
+## Configure
+
+Default config:
+```yaml
+# Condition for triggering the check, Maximum allowed change -> (additions - deletions)
+maxChange: 10
+# Message if the PR exceeds the threshold
+message: "Sorry, the PR is too big :("
+# Close the PR if the change is more than threshold?
+close: true
+# Ignore checks if these words are present in title
+safeWords:
+  - ruler-ignore
+  - wip
+  - draft
+```
+
 ## Setup
 
 ```sh
