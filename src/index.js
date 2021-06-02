@@ -1,4 +1,7 @@
-const { updateChecksAsCompleted } = require("./helpers/checks");
+const {
+    updateChecksAsCompleted,
+    updateChecksAsFailed,
+} = require("./helpers/checks");
 const getConfig = require("./helpers/config");
 
 /**
@@ -65,7 +68,7 @@ module.exports = (app) => {
                 context.log.info("All good, changes are under the limit");
                 try {
                     return updateChecksAsCompleted(context);
-                } catch (e) {
+                } catch (error) {
                     context.log.error({ error });
                 }
             }

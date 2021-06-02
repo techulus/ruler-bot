@@ -34,4 +34,5 @@ const updateChecksAsFailed = async (context) => {
 
 module.exports = {
     updateChecksAsCompleted,
+    updateChecksAsFailed,
 };
