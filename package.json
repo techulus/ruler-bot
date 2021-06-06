@@ -1,12 +1,16 @@
 {
     "name": "ruler-bot",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": true,
     "description": "Take actions based on size of pull request",
     "author": "Arjun Komath <arjun@hey.com>",
     "license": "ISC",
     "homepage": "https://github.com/techulus/ruler-bot",
-    "keywords": ["probot", "github", "probot-app"],
+    "keywords": [
+        "probot",
+        "github",
+        "probot-app"
+    ],
     "scripts": {
         "start": "probot run ./src/index.js",
         "test": "jest",
